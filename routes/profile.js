@@ -17,10 +17,21 @@ const storage = multer.diskStorage({
     }
   })
   
+  const fileFilter = (req, file, cb) => {
+    const mota = file.originalname.split('.'); 
+    const formatua = mota[mota.length-1]
+    if (formatua==='png' || formatua==='jpeg' || formatua==='jpg') {
+        cb(null, true);
+    } else {
+        cb(new Error('Bakarrik PNG eta JPG motako fitxategiak onartzen dira'), false);
+    }
+};
+
 const upload = multer({ storage: storage,
   limits: {
     fileSize: 2 * 1024 * 1024, // 2 MB 
   }, 
+  fileFilter: fileFilter,
 })
 
 /* GET home page. */
@@ -31,6 +42,7 @@ router.get('/', function(req, res, next) {
 router.post('/', upload.single('avatar'), function (req, res, next) {
     console.log(req.file)
     // req.body will hold the text fields, if there were any
+    console.log('Zure izena: ' + req.body.izena + '. Fitxategia: http://localhost:3000/uploads' + req.file.originalname);
     res.send("Jasota")
 })
 
